@@ -12,4 +12,9 @@ public class Order : IBaseEntity
 
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
+    [ForeignKey("User")]
+    public int UserId { get; set; }
+
+    public User? User { get; set; }
+
 }

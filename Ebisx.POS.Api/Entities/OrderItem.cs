@@ -1,4 +1,5 @@
 ﻿
+
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
@@ -18,7 +19,7 @@ public class OrderItem : IBaseEntity
 
     [Column(TypeName = "decimal(18,2)")]
     public decimal VatAtPurchase { get; set; }
-
+    
 
     [ForeignKey("Product")]
     public Guid ProductId { get; set; } // Reference to Product

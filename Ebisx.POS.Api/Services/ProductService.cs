@@ -1,4 +1,5 @@
-﻿using Ebisx.POS.Api.Data;
+﻿using System.Collections.Generic;
+using Ebisx.POS.Api.Data;
 using Ebisx.POS.Api.Entities;
 using Ebisx.POS.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -34,12 +35,8 @@ namespace Ebisx.POS.Api.Services
 
         public async Task<bool> UpdateProductAsync(Guid id, Product updatedProduct)
         {
-            var existingProduct = await _dbContext.Products.FindAsync(id);
-            if (existingProduct == null) return false;
-
-            existingProduct.Name = updatedProduct.Name;
-            existingProduct.Price = updatedProduct.Price;
-
+            _dbContext.Products.Attach(updatedProduct);
+            _dbContext.Entry(updatedProduct).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
             return true;
         }
