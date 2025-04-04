@@ -4,6 +4,7 @@ using Ebisx.POS.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ebisx.POS.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403081934_CleanSchema")]
+    partial class CleanSchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -178,10 +181,6 @@ namespace Ebisx.POS.Api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.HasKey("Id");
 
                     b.ToTable("Orders");
@@ -246,6 +245,8 @@ namespace Ebisx.POS.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NonCashPaymentMethodID");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("PaymentTypeId");
 
@@ -435,6 +436,12 @@ namespace Ebisx.POS.Api.Migrations
                         .WithMany()
                         .HasForeignKey("NonCashPaymentMethodID");
 
+                    b.HasOne("Ebisx.POS.Api.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Ebisx.POS.Api.Entities.PaymentType", "PaymentType")
                         .WithMany()
                         .HasForeignKey("PaymentTypeId")
@@ -446,6 +453,8 @@ namespace Ebisx.POS.Api.Migrations
                         .HasForeignKey("SalesInvoicePrivateId");
 
                     b.Navigation("NonCashPaymentMethod");
+
+                    b.Navigation("Order");
 
                     b.Navigation("PaymentType");
                 });

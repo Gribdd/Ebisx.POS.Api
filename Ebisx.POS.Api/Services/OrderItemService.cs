@@ -19,7 +19,7 @@ namespace Ebisx.POS.Api.Services
             return await _dbContext.OrderItems.ToListAsync();
         }
 
-        public async Task<OrderItem?> GetOrderItemByIdAsync(Guid id)
+        public async Task<OrderItem?> GetOrderItemByIdAsync(int id)
         {
             return await _dbContext.OrderItems.FindAsync(id);
         }
@@ -31,7 +31,7 @@ namespace Ebisx.POS.Api.Services
             return orderItem;
         }
 
-        public async Task<bool> UpdateOrderItemAsync(Guid id, OrderItem updatedOrderItem)
+        public async Task<bool> UpdateOrderItemAsync(int id, OrderItem updatedOrderItem)
         {
             var existingOrderItem = await _dbContext.OrderItems.FindAsync(id);
             if (existingOrderItem == null) return false;
@@ -46,7 +46,7 @@ namespace Ebisx.POS.Api.Services
             return true;
         }
 
-        public async Task<bool> DeleteOrderItemAsync(Guid id)
+        public async Task<bool> DeleteOrderItemAsync(int id)
         {
             var orderItem = await _dbContext.OrderItems.FindAsync(id);
             if (orderItem == null) return false;

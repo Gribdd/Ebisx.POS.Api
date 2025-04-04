@@ -23,7 +23,7 @@ public class OrderItemController : Controller
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(Guid id)
+    public async Task<IActionResult> GetById(int id)
     {
         var orderItem = await _orderItemService.GetOrderItemByIdAsync(id);
         if (orderItem == null)
@@ -40,7 +40,7 @@ public class OrderItemController : Controller
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(Guid id, [FromBody] OrderItem orderItem)
+    public async Task<IActionResult> Update(int id, [FromBody] OrderItem orderItem)
     {
         var updated = await _orderItemService.UpdateOrderItemAsync(id, orderItem);
         if (!updated)
@@ -50,7 +50,7 @@ public class OrderItemController : Controller
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _orderItemService.DeleteOrderItemAsync(id);
         if (!deleted)

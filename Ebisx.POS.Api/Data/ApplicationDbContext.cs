@@ -23,4 +23,5 @@ public class ApplicationDbContext : DbContext
     public DbSet<Discount> Discounts { get; set; }
     public DbSet<DiscountType> DiscountTypes { get; set; }
     public DbSet<Customer> Customers { get; set; }
+    public DbSet<SalesInvoice> SalesInvoices { get; set; }
 }

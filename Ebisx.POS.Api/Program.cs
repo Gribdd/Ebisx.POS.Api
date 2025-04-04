@@ -24,6 +24,16 @@ builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserRoleService, UserRoleService>();
+builder.Services.AddScoped<IBusinessInfoService, BusinessInfoService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IDiscountService, DiscountService>();
+builder.Services.AddScoped<IDiscountTypeService, DiscountTypeService>();
+builder.Services.AddScoped<IMachineInfoService, MachineInfoService>();
+builder.Services.AddScoped<INonCashPaymentMethodService, NonCashPaymentMethodService>();
+builder.Services.AddScoped<IPaymentTypeService, PaymentTypeService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ISalesInvoiceService, SalesInvoiceService>();
 #endregion
 
 var app = builder.Build();

@@ -4,6 +4,7 @@ using Ebisx.POS.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ebisx.POS.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250403034620_AddSalesInvoiceEntity")]
+    partial class AddSalesInvoiceEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,12 +59,14 @@ namespace Ebisx.POS.Api.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("IdNumber")
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("TinNumber")
@@ -157,10 +162,6 @@ namespace Ebisx.POS.Api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AccountNumber")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Provider")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -178,11 +179,12 @@ namespace Ebisx.POS.Api.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Orders");
                 });
@@ -214,6 +216,8 @@ namespace Ebisx.POS.Api.Migrations
 
                     b.HasIndex("OrderId");
 
+                    b.HasIndex("ProductId");
+
                     b.ToTable("OrderItems");
                 });
 
@@ -227,9 +231,6 @@ namespace Ebisx.POS.Api.Migrations
 
                     b.Property<decimal>("AmountPaid")
                         .HasColumnType("decimal(65,30)");
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("NonCashPaymentMethodID")
                         .HasColumnType("int");
@@ -246,6 +247,8 @@ namespace Ebisx.POS.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("NonCashPaymentMethodID");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("PaymentTypeId");
 
@@ -324,9 +327,6 @@ namespace Ebisx.POS.Api.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("PrivateId");
 
                     b.HasIndex("BusinessInfoId");
@@ -337,8 +337,6 @@ namespace Ebisx.POS.Api.Migrations
 
                     b.HasIndex("PublicId")
                         .IsUnique();
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("SalesInvoices");
                 });
@@ -420,13 +418,34 @@ namespace Ebisx.POS.Api.Migrations
                     b.Navigation("DiscountType");
                 });
 
+            modelBuilder.Entity("Ebisx.POS.Api.Entities.Order", b =>
+                {
+                    b.HasOne("Ebisx.POS.Api.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Ebisx.POS.Api.Entities.OrderItem", b =>
                 {
-                    b.HasOne("Ebisx.POS.Api.Entities.Order", null)
+                    b.HasOne("Ebisx.POS.Api.Entities.Order", "Order")
                         .WithMany("OrderItems")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("Ebisx.POS.Api.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Ebisx.POS.Api.Entities.Payment", b =>
@@ -434,6 +453,12 @@ namespace Ebisx.POS.Api.Migrations
                     b.HasOne("Ebisx.POS.Api.Entities.NonCashPaymentMethod", "NonCashPaymentMethod")
                         .WithMany()
                         .HasForeignKey("NonCashPaymentMethodID");
+
+                    b.HasOne("Ebisx.POS.Api.Entities.Order", "Order")
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Ebisx.POS.Api.Entities.PaymentType", "PaymentType")
                         .WithMany()
@@ -446,6 +471,8 @@ namespace Ebisx.POS.Api.Migrations
                         .HasForeignKey("SalesInvoicePrivateId");
 
                     b.Navigation("NonCashPaymentMethod");
+
+                    b.Navigation("Order");
 
                     b.Navigation("PaymentType");
                 });
@@ -470,19 +497,11 @@ namespace Ebisx.POS.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ebisx.POS.Api.Entities.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("BusinessInfo");
 
                     b.Navigation("MachineInfo");
 
                     b.Navigation("Order");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Ebisx.POS.Api.Entities.User", b =>

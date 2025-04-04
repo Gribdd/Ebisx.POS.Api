@@ -4,17 +4,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Ebisx.POS.Api.Entities;
 
-public class Order : IBaseEntity
+public class Order 
 {
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Key]   
-    public Guid Id { get; set; }
+    public int Id { get; set; }
 
     public ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-    [ForeignKey("User")]
-    public int UserId { get; set; }
-
-    public User? User { get; set; }
-
+    public string Status { get; set; } = string.Empty;
 }
