@@ -70,6 +70,6 @@ public class MappingProfile : Profile
         CreateMap<UserRoleRequestDto, UserRole>(); 
 
         CreateMap<User, UserResponseDto>(); 
-        CreateMap<UserRequestDto, SalesInvoice>();
+        CreateMap<UserRequestDto, User>();
     }
 }

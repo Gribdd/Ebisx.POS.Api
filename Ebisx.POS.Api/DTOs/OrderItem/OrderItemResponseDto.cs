@@ -8,7 +8,7 @@ public class OrderItemResponseDto
     public int QuantityAtPurchase { get; set; }
     public decimal PriceAtPurchase { get; set; }
     public decimal VatAtPurchase { get; set; }
-    public ProductResponseDto? Product { get; set; }
+    public int ProductId { get; set; }
     public int OrderId { get; set; }
     public bool IsVoided { get; set; } = false;
 }

@@ -61,7 +61,8 @@ public class ProductService : IProductService
     {
         try
         {
-            var product = await _dbContext.Products.FindAsync(id);
+            var product = await _dbContext.Products
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (product == null) return null;
             var productDto = _mapper.Map<ProductResponseDto>(product);
             return productDto;
@@ -110,8 +111,8 @@ public class ProductService : IProductService
             if (existingProduct == null)
                 return false;
 
-            _mapper.Map(updatedProductDto, existingProduct);
-            _dbContext.Products.Update(existingProduct);
+            _mapper.Map(updatedProductDto, existingProduct);    
+            _dbContext.Products.Attach(existingProduct);
             await _dbContext.SaveChangesAsync();
             return true;
         }
