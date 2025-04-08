@@ -1,13 +1,13 @@
-﻿using Ebisx.POS.Api.Entities;
+﻿using Ebisx.POS.Api.DTOs.Product;
+using Ebisx.POS.Api.Entities;
 
-namespace Ebisx.POS.Api.Services.Interfaces
+namespace Ebisx.POS.Api.Services.Interfaces;
+
+public interface IProductService
 {
-    public interface IProductService
-    {
-        Task<IEnumerable<Product>> GetAllProductsAsync();
-        Task<Product?> GetProductByIdAsync(Guid id);
-        Task<Product> CreateProductAsync(Product product);
-        Task<bool> UpdateProductAsync(Guid id, Product product);
-        Task<bool> DeleteProductAsync(Guid id);
-    }
+    Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync();
+    Task<ProductResponseDto?> GetProductByIdAsync(int id);
+    Task<ProductResponseDto> CreateProductAsync(ProductRequestDto product);
+    Task<bool> UpdateProductAsync(int id, ProductRequestDto product);
+    Task<bool> DeleteProductAsync(int id);
 }

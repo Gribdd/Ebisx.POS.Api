@@ -1,47 +1,135 @@
-﻿using System.Collections.Generic;
+﻿using AutoMapper;
 using Ebisx.POS.Api.Data;
+using Ebisx.POS.Api.DTOs.Product;
 using Ebisx.POS.Api.Entities;
 using Ebisx.POS.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace Ebisx.POS.Api.Services
+namespace Ebisx.POS.Api.Services;
+
+/// <summary>
+/// Service for managing product-related operations in the POS system.
+/// </summary>
+public class ProductService : IProductService
 {
-    public class ProductService : IProductService
+    private readonly ApplicationDbContext _dbContext;
+    private readonly ILogger<ProductService> _logger;
+    private readonly IMapper _mapper;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProductService"/> class.
+    /// </summary>
+    /// <param name="dbContext">The database context for accessing product data.</param>
+    /// <param name="logger">The logger for logging errors and information.</param>
+    /// <param name="mapper">The mapper for mapping entities to DTOs and vice versa.</param>
+    public ProductService(
+        ApplicationDbContext dbContext,
+        ILogger<ProductService> logger,
+        IMapper mapper)
     {
-        private readonly ApplicationDbContext _dbContext;
+        _dbContext = dbContext;
+        _logger = logger;
+        _mapper = mapper;
+    }
 
-        public ProductService(ApplicationDbContext dbContext)
+    /// <summary>
+    /// Retrieves all products from the database.
+    /// </summary>
+    /// <returns>A collection of <see cref="ProductResponseDto"/> representing all products.</returns>
+    public async Task<IEnumerable<ProductResponseDto>> GetAllProductsAsync()
+    {
+        try
         {
-            _dbContext = dbContext;
+            var products = await _dbContext.Products.ToListAsync();
+            var productDtos = _mapper.Map<IEnumerable<ProductResponseDto>>(products);
+            return productDtos;
         }
-
-        public async Task<IEnumerable<Product>> GetAllProductsAsync()
+        catch (Exception ex)
         {
-            return await _dbContext.Products.ToListAsync();
+            _logger.LogError("Error occurred while fetching all products: {Message}", ex.Message);
+            throw;
         }
+    }
 
-        public async Task<Product?> GetProductByIdAsync(Guid id)
+    /// <summary>
+    /// Retrieves a product by its unique identifier.
+    /// </summary>
+    /// <param name="id">The unique identifier of the product.</param>
+    /// <returns>A <see cref="ProductResponseDto"/> representing the product, or null if not found.</returns>
+    public async Task<ProductResponseDto?> GetProductByIdAsync(int id)
+    {
+        try
         {
-            return await _dbContext.Products.FindAsync(id);
+            var product = await _dbContext.Products.FindAsync(id);
+            if (product == null) return null;
+            var productDto = _mapper.Map<ProductResponseDto>(product);
+            return productDto;
         }
-
-        public async Task<Product> CreateProductAsync(Product product)
+        catch (Exception ex)
         {
-            _dbContext.Products.Add(product);
+            _logger.LogError("Error occurred while fetching product with ID {Id}: {Message}", id, ex.Message);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Creates a new product in the database.
+    /// </summary>
+    /// <param name="product">The product data to create.</param>
+    /// <returns>A <see cref="ProductResponseDto"/> representing the created product.</returns>
+    public async Task<ProductResponseDto> CreateProductAsync(ProductRequestDto product)
+    {
+        try
+        {
+            var productEntity = _mapper.Map<Product>(product);
+            _dbContext.Products.Add(productEntity);
             await _dbContext.SaveChangesAsync();
-            return product;
-        }
 
-        public async Task<bool> UpdateProductAsync(Guid id, Product updatedProduct)
+            var productResponseDto = _mapper.Map<ProductResponseDto>(productEntity);
+            return productResponseDto;
+        }
+        catch (Exception ex)
         {
-            _dbContext.Products.Attach(updatedProduct);
-            _dbContext.Entry(updatedProduct).State = EntityState.Modified;
+            _logger.LogError("Error occurred while creating a product: {Message}", ex.Message);
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// Updates an existing product in the database.
+    /// </summary>
+    /// <param name="id">The unique identifier of the product to update.</param>
+    /// <param name="updatedProductDto">The updated product data.</param>
+    /// <returns>True if the update was successful, false if the product was not found.</returns>
+    public async Task<bool> UpdateProductAsync(int id, ProductRequestDto updatedProductDto)
+    {
+        try
+        {
+            var existingProduct = await _dbContext.Products.FindAsync(id);
+            if (existingProduct == null)
+                return false;
+
+            _mapper.Map(updatedProductDto, existingProduct);
+            _dbContext.Products.Update(existingProduct);
             await _dbContext.SaveChangesAsync();
             return true;
         }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error occurred while updating product with ID {Id}: {Message}", id, ex.Message);
+            throw;
+        }
+    }
 
-        public async Task<bool> DeleteProductAsync(Guid id)
+    /// <summary>
+    /// Deletes a product from the database.
+    /// </summary>
+    /// <param name="id">The unique identifier of the product to delete.</param>
+    /// <returns>True if the deletion was successful, false if the product was not found.</returns>
+    public async Task<bool> DeleteProductAsync(int id)
+    {
+        try
         {
             var product = await _dbContext.Products.FindAsync(id);
             if (product == null) return false;
@@ -50,6 +138,10 @@ namespace Ebisx.POS.Api.Services
             await _dbContext.SaveChangesAsync();
             return true;
         }
+        catch (Exception ex)
+        {
+            _logger.LogError("Error occurred while deleting product with ID {Id}: {Message}", id, ex.Message);
+            throw;
+        }
     }
-
 }
