@@ -17,14 +17,17 @@ public class CustomerController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<CustomerResponseDto>>> GetAllCustomers()
+    [ProducesResponseType(type: typeof(IEnumerable<CustomerResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllCustomers()
     {
         var customers = await _customerService.GetAllCustomersAsync();
         return Ok(customers);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<CustomerResponseDto>> GetCustomerById(int id)
+    [ProducesResponseType(type: typeof(CustomerResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCustomerById(int id)
     {
         var customer = await _customerService.GetCustomerByIdAsync(id);
         if (customer == null)
@@ -35,13 +38,17 @@ public class CustomerController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CustomerResponseDto>> CreateCustomer(CustomerRequestDto customer)
+    [ProducesResponseType(type: typeof(CustomerResponseDto), StatusCodes.Status201Created)]
+
+    public async Task<IActionResult> CreateCustomer(CustomerRequestDto customer)
     {
         var createdCustomer = await _customerService.CreateCustomerAsync(customer);
         return CreatedAtAction(nameof(GetCustomerById), new { id = createdCustomer.Id }, createdCustomer);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateCustomer(int id, CustomerRequestDto customer)
     {
         var updated = await _customerService.UpdateCustomerAsync(id, customer);
@@ -53,6 +60,8 @@ public class CustomerController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteCustomer(int id)
     {
         var deleted = await _customerService.DeleteCustomerAsync(id);

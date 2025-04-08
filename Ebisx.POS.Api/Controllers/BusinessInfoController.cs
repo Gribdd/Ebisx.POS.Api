@@ -16,14 +16,17 @@ public class BusinessInfoController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<BusinessInfoResponseDto>>> GetAllBusinessInfo()
+    [ProducesResponseType(type: typeof(IEnumerable<BusinessInfoResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllBusinessInfo()
     {
         var businessInfoList = await _businessInfoService.GetAllBusinessInfoAsync();
         return Ok(businessInfoList);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<BusinessInfoResponseDto>> GetBusinessInfoById(int id)
+    [ProducesResponseType(type: typeof(BusinessInfoResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetBusinessInfoById(int id)
     {
         var businessInfo = await _businessInfoService.GetBusinessInfoByIdAsync(id);
         if (businessInfo == null)
@@ -34,13 +37,16 @@ public class BusinessInfoController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<BusinessInfoResponseDto>> CreateBusinessInfo(BusinessInfoRequestDto businessInfo)
+    [ProducesResponseType(type: typeof(BusinessInfoResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateBusinessInfo(BusinessInfoRequestDto businessInfo)
     {
         var createdBusinessInfo = await _businessInfoService.CreateBusinessInfoAsync(businessInfo);
         return CreatedAtAction(nameof(GetBusinessInfoById), new { id = createdBusinessInfo.Id }, createdBusinessInfo);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateBusinessInfo(int id, BusinessInfoRequestDto businessInfo)
     {
         var updated = await _businessInfoService.UpdateBusinessInfoAsync(id, businessInfo);
@@ -52,6 +58,8 @@ public class BusinessInfoController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteBusinessInfo(int id)
     {
         var deleted = await _businessInfoService.DeleteBusinessInfoAsync(id);

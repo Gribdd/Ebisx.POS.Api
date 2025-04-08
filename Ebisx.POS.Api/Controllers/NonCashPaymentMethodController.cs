@@ -21,14 +21,17 @@ public class NonCashPaymentMethodController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<NonCashPaymentMethodResponseDto>>> GetAllNonCashPaymentMethods()
+    [ProducesResponseType(type: typeof(IEnumerable<NonCashPaymentMethodResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllNonCashPaymentMethods()
     {
         var nonCashPaymentMethods = await _nonCashPaymentMethodService.GetAllNonCashPaymentMethodsAsync();
         return Ok(nonCashPaymentMethods);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<NonCashPaymentMethodResponseDto>> GetNonCashPaymentMethodById(int id)
+    [ProducesResponseType(type: typeof(NonCashPaymentMethodResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetNonCashPaymentMethodById(int id)
     {
         var nonCashPaymentMethod = await _nonCashPaymentMethodService.GetNonCashPaymentMethodByIdAsync(id);
         if (nonCashPaymentMethod == null)
@@ -39,13 +42,16 @@ public class NonCashPaymentMethodController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<NonCashPaymentMethodResponseDto>> CreateNonCashPaymentMethod(NonCashPaymentMethodRequestDto nonCashPaymentMethod)
+    [ProducesResponseType(type: typeof(NonCashPaymentMethodResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateNonCashPaymentMethod(NonCashPaymentMethodRequestDto nonCashPaymentMethod)
     {
         var createdNonCashPaymentMethod = await _nonCashPaymentMethodService.CreateNonCashPaymentMethodAsync(nonCashPaymentMethod);
         return CreatedAtAction(nameof(GetNonCashPaymentMethodById), new { id = createdNonCashPaymentMethod.Id }, createdNonCashPaymentMethod);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateNonCashPaymentMethod(int id, NonCashPaymentMethodRequestDto nonCashPaymentMethod)
     {
         var updated = await _nonCashPaymentMethodService.UpdateNonCashPaymentMethodAsync(id, nonCashPaymentMethod);
@@ -57,6 +63,8 @@ public class NonCashPaymentMethodController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteNonCashPaymentMethod(int id)
     {
         var deleted = await _nonCashPaymentMethodService.DeleteNonCashPaymentMethodAsync(id);

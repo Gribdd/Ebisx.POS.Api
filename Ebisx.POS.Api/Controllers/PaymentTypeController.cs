@@ -17,14 +17,17 @@ public class PaymentTypeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PaymentTypeResponseDto>>> GetAllPaymentTypes()
+    [ProducesResponseType(type: typeof(IEnumerable<PaymentTypeResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllPaymentTypes()
     {
         var paymentTypes = await _paymentTypeService.GetAllPaymentTypesAsync();
         return Ok(paymentTypes);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<PaymentTypeResponseDto>> GetPaymentTypeById(int id)
+    [ProducesResponseType(type: typeof(PaymentTypeResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetPaymentTypeById(int id)
     {
         var paymentType = await _paymentTypeService.GetPaymentTypeByIdAsync(id);
         if (paymentType == null)
@@ -35,13 +38,16 @@ public class PaymentTypeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<PaymentTypeResponseDto>> CreatePaymentType(PaymentTypeRequestDto paymentType)
+    [ProducesResponseType(type: typeof(PaymentTypeResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreatePaymentType(PaymentTypeRequestDto paymentType)
     {
         var createdPaymentType = await _paymentTypeService.CreatePaymentTypeAsync(paymentType);
         return CreatedAtAction(nameof(GetPaymentTypeById), new { id = createdPaymentType.Id }, createdPaymentType);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdatePaymentType(int id, PaymentTypeRequestDto paymentType)
     {
         var updated = await _paymentTypeService.UpdatePaymentTypeAsync(id, paymentType);
@@ -53,6 +59,8 @@ public class PaymentTypeController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeletePaymentType(int id)
     {
         var deleted = await _paymentTypeService.DeletePaymentTypeAsync(id);

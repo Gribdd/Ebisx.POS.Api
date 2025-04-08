@@ -17,14 +17,17 @@ public class DiscounTypeController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<DiscountTypeResponseDto>>> GetAllDiscountTypes()
+    [ProducesResponseType(type: typeof(IEnumerable<DiscountTypeResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllDiscountTypes()
     {
         var discountTypeList = await _discountTypeService.GetAllDiscountTypesAsync();
         return Ok(discountTypeList);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<DiscountTypeResponseDto>> GetDiscountTypeById(int id)
+    [ProducesResponseType(type: typeof(DiscountTypeResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetDiscountTypeById(int id)
     {
         var discountType = await _discountTypeService.GetDiscountTypeByIdAsync(id);
         if (discountType == null)
@@ -35,13 +38,16 @@ public class DiscounTypeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<DiscountTypeResponseDto>> CreateDiscountType(DiscountTypeRequestDto discountType)
+    [ProducesResponseType(type: typeof(DiscountTypeResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateDiscountType(DiscountTypeRequestDto discountType)
     {
         var createdDiscountType = await _discountTypeService.CreateDiscountTypeAsync(discountType);
         return CreatedAtAction(nameof(GetDiscountTypeById), new { id = createdDiscountType.Id }, createdDiscountType);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateDiscountType(int id, DiscountTypeRequestDto discountType)
     {
         var updated = await _discountTypeService.UpdateDiscountTypeAsync(id, discountType);
@@ -53,6 +59,8 @@ public class DiscounTypeController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteDiscountType(int id)
     {
         var deleted = await _discountTypeService.DeleteDiscountTypeAsync(id);

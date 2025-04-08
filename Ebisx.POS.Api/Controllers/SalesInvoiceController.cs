@@ -17,14 +17,17 @@ public class SalesInvoiceController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<SalesInvoiceResponseDto>>> GetAllSalesInvoices()
+    [ProducesResponseType(type: typeof(IEnumerable<SalesInvoiceResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllSalesInvoices()
     {
         var salesInvoices = await _salesInvoiceService.GetAllSalesInvoicesAsync();
         return Ok(salesInvoices);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<SalesInvoiceResponseDto>> GetSalesInvoiceById(int id)
+    [ProducesResponseType(type: typeof(SalesInvoiceResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetSalesInvoiceById(int id)
     {
         var salesInvoice = await _salesInvoiceService.GetSalesInvoiceByIdAsync(id);
         if (salesInvoice == null)
@@ -35,13 +38,16 @@ public class SalesInvoiceController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<SalesInvoiceResponseDto>> CreateSalesInvoice(SalesInvoiceRequestDto salesInvoice)
+    [ProducesResponseType(type: typeof(SalesInvoiceResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateSalesInvoice(SalesInvoiceRequestDto salesInvoice)
     {
         var createdSalesInvoice = await _salesInvoiceService.CreateSalesInvoiceAsync(salesInvoice);
         return CreatedAtAction(nameof(GetSalesInvoiceById), new { id = createdSalesInvoice.PrivateId }, createdSalesInvoice);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateSalesInvoice(int id, SalesInvoiceRequestDto salesInvoice)
     {
         var updated = await _salesInvoiceService.UpdateSalesInvoiceAsync(id, salesInvoice);
@@ -53,6 +59,8 @@ public class SalesInvoiceController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteSalesInvoice(int id)
     {
         var deleted = await _salesInvoiceService.DeleteSalesInvoiceAsync(id);

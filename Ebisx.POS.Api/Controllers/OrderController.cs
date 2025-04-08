@@ -19,46 +19,57 @@ public class OrderController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<OrderResponseDto>>> GetAll()
+    [ProducesResponseType(type: typeof(IEnumerable<OrderResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAll()
     {
         var orders = await _orderService.GetAllOrdersAsync();
         return Ok(orders);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<OrderResponseDto>> GetById(int id)
+    [ProducesResponseType(type: typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(int id)
     {
         var order = await _orderService.GetOrderByIdAsync(id);
         if (order == null)
+        {
             return NotFound();
-
+        }
         return Ok(order);
     }
 
-    [HttpPost]  
-    public async Task<ActionResult<OrderResponseDto>> Create([FromBody] OrderRequestDto order)
+    [HttpPost]
+    [ProducesResponseType(type: typeof(OrderResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> Create([FromBody] OrderRequestDto order)
     {
         var createdOrder = await _orderService.CreateOrderAsync(order);
         return CreatedAtAction(nameof(GetById), new { id = createdOrder.Id }, createdOrder);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Update(int id, [FromBody] OrderRequestDto order)
     {
         var updated = await _orderService.UpdateOrderAsync(id, order);
         if (!updated)
+        {
             return NotFound();
-
+        }
         return NoContent();
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
-    {   
+    {
         var deleted = await _orderService.DeleteOrderAsync(id);
         if (!deleted)
+        {
             return NotFound();
-
+        }
         return NoContent();
     }
 }

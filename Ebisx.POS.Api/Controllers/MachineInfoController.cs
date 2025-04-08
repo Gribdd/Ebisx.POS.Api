@@ -17,14 +17,17 @@ public class MachineInfoController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MachineInfoResponseDto>>> GetAllMachineInfo()
+    [ProducesResponseType(type: typeof(IEnumerable<MachineInfoResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllMachineInfo()
     {
         var machineInfoList = await _machineInfoService.GetAllMachineInfoAsync();
         return Ok(machineInfoList);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<MachineInfoResponseDto>> GetMachineInfoById(int id)
+    [ProducesResponseType(type: typeof(MachineInfoResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetMachineInfoById(int id)
     {
         var machineInfo = await _machineInfoService.GetMachineInfoByIdAsync(id);
         if (machineInfo == null)
@@ -35,13 +38,16 @@ public class MachineInfoController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<MachineInfoResponseDto>> CreateMachineInfo(MachineInfoRequestDto machineInfo)
+    [ProducesResponseType(type: typeof(MachineInfoResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateMachineInfo(MachineInfoRequestDto machineInfo)
     {
         var createdMachineInfo = await _machineInfoService.CreateMachineInfoAsync(machineInfo);
         return CreatedAtAction(nameof(GetMachineInfoById), new { id = createdMachineInfo.Id }, createdMachineInfo);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateMachineInfo(int id, MachineInfoRequestDto machineInfo)
     {
         var updated = await _machineInfoService.UpdateMachineInfoAsync(id, machineInfo);
@@ -53,6 +59,8 @@ public class MachineInfoController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteMachineInfo(int id)
     {
         var deleted = await _machineInfoService.DeleteMachineInfoAsync(id);

@@ -17,14 +17,17 @@ public class DiscountController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<DiscountResponseDto>>> GetAllDiscounts()
+    [ProducesResponseType(type: typeof(IEnumerable<DiscountResponseDto>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetAllDiscounts()
     {
         var discountList = await _discountService.GetAllDiscountsAsync();
         return Ok(discountList);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<DiscountResponseDto>> GetDiscountById(int id)
+    [ProducesResponseType(type: typeof(DiscountResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetDiscountById(int id)
     {
         var discount = await _discountService.GetDiscountByIdAsync(id);
         if (discount == null)
@@ -35,13 +38,16 @@ public class DiscountController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<DiscountResponseDto>> CreateDiscount(DiscountRequestDto discount)
+    [ProducesResponseType(type: typeof(DiscountResponseDto), StatusCodes.Status201Created)]
+    public async Task<IActionResult> CreateDiscount(DiscountRequestDto discount)
     {
         var createdDiscount = await _discountService.CreateDiscountAsync(discount);
         return CreatedAtAction(nameof(GetDiscountById), new { id = createdDiscount.Id }, createdDiscount);
     }
 
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateDiscount(int id, DiscountRequestDto discount)
     {
         var updated = await _discountService.UpdateDiscountAsync(id, discount);
@@ -53,6 +59,8 @@ public class DiscountController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteDiscount(int id)
     {
         var deleted = await _discountService.DeleteDiscountAsync(id);
