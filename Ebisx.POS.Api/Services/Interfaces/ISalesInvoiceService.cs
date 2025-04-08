@@ -1,13 +1,12 @@
-using Ebisx.POS.Api.Entities;
+using Ebisx.POS.Api.DTOs.SalesInvoice;
 
-namespace Ebisx.POS.Api.Services.Interfaces
+namespace Ebisx.POS.Api.Services.Interfaces;
+
+public interface ISalesInvoiceService
 {
-    public interface ISalesInvoiceService
-    {
-        Task<IEnumerable<SalesInvoice>> GetAllSalesInvoicesAsync();
-        Task<SalesInvoice?> GetSalesInvoiceByIdAsync(int id);
-        Task<SalesInvoice> CreateSalesInvoiceAsync(SalesInvoice salesInvoice);
-        Task<bool> UpdateSalesInvoiceAsync(int id, SalesInvoice salesInvoice);
-        Task<bool> DeleteSalesInvoiceAsync(int id);
-    }
+    Task<IEnumerable<SalesInvoiceResponseDto>> GetAllSalesInvoicesAsync();
+    Task<SalesInvoiceResponseDto?> GetSalesInvoiceByIdAsync(int id);
+    Task<SalesInvoiceResponseDto> CreateSalesInvoiceAsync(SalesInvoiceRequestDto salesInvoice);
+    Task<bool> UpdateSalesInvoiceAsync(int id, SalesInvoiceRequestDto salesInvoice);
+    Task<bool> DeleteSalesInvoiceAsync(int id);
 }

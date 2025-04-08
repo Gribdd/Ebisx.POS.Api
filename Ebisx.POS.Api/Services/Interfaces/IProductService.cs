@@ -1,5 +1,4 @@
 ﻿using Ebisx.POS.Api.DTOs.Product;
-using Ebisx.POS.Api.Entities;
 
 namespace Ebisx.POS.Api.Services.Interfaces;
 

@@ -1,14 +1,12 @@
-﻿using Ebisx.POS.Api.Entities;
+﻿using Ebisx.POS.Api.DTOs.OrderItem;
 
-namespace Ebisx.POS.Api.Services.Interfaces
+namespace Ebisx.POS.Api.Services.Interfaces;
+
+public interface IOrderItemService
 {
-    public interface IOrderItemService
-    {
-        Task<IEnumerable<OrderItem>> GetAllOrderItemsAsync();
-        Task<OrderItem?> GetOrderItemByIdAsync(int id);
-        Task<OrderItem> CreateOrderItemAsync(OrderItem orderItem);
-        Task<bool> UpdateOrderItemAsync(int id, OrderItem orderItem);
-        Task<bool> DeleteOrderItemAsync(int id);
-    }
-
+    Task<IEnumerable<OrderItemResponseDto>> GetAllOrderItemsAsync();
+    Task<OrderItemResponseDto?> GetOrderItemByIdAsync(int id);
+    Task<OrderItemResponseDto> CreateOrderItemAsync(OrderItemRequestDto orderItem);
+    Task<bool> UpdateOrderItemAsync(int id, OrderItemRequestDto orderItem);
+    Task<bool> DeleteOrderItemAsync(int id);
 }
