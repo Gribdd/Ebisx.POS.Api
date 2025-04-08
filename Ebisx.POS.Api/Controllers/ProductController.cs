@@ -15,14 +15,14 @@ public class ProductController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<ProductResponseDto>> GetAll()
     {
         var products = await _productService.GetAllProductsAsync();
         return Ok(products);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> GetById(int id)
+    public async Task<ActionResult<ProductResponseDto>> GetById(int id)
     {
         var product = await _productService.GetProductByIdAsync(id);
         if (product == null)
@@ -32,7 +32,7 @@ public class ProductController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] ProductRequestDto product)
+    public async Task<ActionResult<ProductResponseDto>> Create([FromBody] ProductRequestDto product)
     {
         var createdProduct = await _productService.CreateProductAsync(product);
         return CreatedAtAction(nameof(GetById), new { id = createdProduct.Id }, createdProduct);

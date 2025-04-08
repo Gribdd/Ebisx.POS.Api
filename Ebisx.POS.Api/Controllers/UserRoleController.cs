@@ -1,4 +1,5 @@
-﻿using Ebisx.POS.Api.Entities;
+﻿using Ebisx.POS.Api.DTOs.UserRole;
+using Ebisx.POS.Api.Entities;
 using Ebisx.POS.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,14 +34,14 @@ public class UserRoleController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] UserRole role)
+    public async Task<IActionResult> Create([FromBody] UserRoleRequestDto role)
     {
         var createdRole = await _userRoleService.CreateRoleAsync(role);
         return CreatedAtAction(nameof(GetById), new { id = createdRole.Id }, createdRole);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] UserRole role)
+    public async Task<IActionResult> Update(int id, [FromBody] UserRoleRequestDto role)
     {
         var updated = await _userRoleService.UpdateRoleAsync(id, role);
         if (!updated)

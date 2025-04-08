@@ -1,65 +1,65 @@
+using Ebisx.POS.Api.DTOs.SalesInvoice;
 using Ebisx.POS.Api.Entities;
 using Ebisx.POS.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Ebisx.POS.Api.Controllers
+namespace Ebisx.POS.Api.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class SalesInvoiceController : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SalesInvoiceController : ControllerBase
+    private readonly ISalesInvoiceService _salesInvoiceService;
+
+    public SalesInvoiceController(ISalesInvoiceService salesInvoiceService)
     {
-        private readonly ISalesInvoiceService _salesInvoiceService;
+        _salesInvoiceService = salesInvoiceService;
+    }
 
-        public SalesInvoiceController(ISalesInvoiceService salesInvoiceService)
-        {
-            _salesInvoiceService = salesInvoiceService;
-        }
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<SalesInvoiceResponseDto>>> GetAllSalesInvoices()
+    {
+        var salesInvoices = await _salesInvoiceService.GetAllSalesInvoicesAsync();
+        return Ok(salesInvoices);
+    }
 
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<SalesInvoice>>> GetAllSalesInvoices()
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<SalesInvoiceResponseDto>> GetSalesInvoiceById(int id)
+    {
+        var salesInvoice = await _salesInvoiceService.GetSalesInvoiceByIdAsync(id);
+        if (salesInvoice == null)
         {
-            var salesInvoices = await _salesInvoiceService.GetAllSalesInvoicesAsync();
-            return Ok(salesInvoices);
+            return NotFound();
         }
+        return Ok(salesInvoice);
+    }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SalesInvoice>> GetSalesInvoiceById(int id)
-        {
-            var salesInvoice = await _salesInvoiceService.GetSalesInvoiceByIdAsync(id);
-            if (salesInvoice == null)
-            {
-                return NotFound();
-            }
-            return Ok(salesInvoice);
-        }
+    [HttpPost]
+    public async Task<ActionResult<SalesInvoiceResponseDto>> CreateSalesInvoice(SalesInvoiceRequestDto salesInvoice)
+    {
+        var createdSalesInvoice = await _salesInvoiceService.CreateSalesInvoiceAsync(salesInvoice);
+        return CreatedAtAction(nameof(GetSalesInvoiceById), new { id = createdSalesInvoice.PrivateId }, createdSalesInvoice);
+    }
 
-        [HttpPost]
-        public async Task<ActionResult<SalesInvoice>> CreateSalesInvoice(SalesInvoice salesInvoice)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateSalesInvoice(int id, SalesInvoiceRequestDto salesInvoice)
+    {
+        var updated = await _salesInvoiceService.UpdateSalesInvoiceAsync(id, salesInvoice);
+        if (!updated)
         {
-            var createdSalesInvoice = await _salesInvoiceService.CreateSalesInvoiceAsync(salesInvoice);
-            return CreatedAtAction(nameof(GetSalesInvoiceById), new { id = createdSalesInvoice.PrivateId }, createdSalesInvoice);
+            return NotFound();
         }
+        return NoContent();
+    }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSalesInvoice(int id, SalesInvoice salesInvoice)
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteSalesInvoice(int id)
+    {
+        var deleted = await _salesInvoiceService.DeleteSalesInvoiceAsync(id);
+        if (!deleted)
         {
-            var updated = await _salesInvoiceService.UpdateSalesInvoiceAsync(id, salesInvoice);
-            if (!updated)
-            {
-                return NotFound();
-            }
-            return NoContent();
+            return NotFound();
         }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSalesInvoice(int id)
-        {
-            var deleted = await _salesInvoiceService.DeleteSalesInvoiceAsync(id);
-            if (!deleted)
-            {
-                return NotFound();
-            }
-            return NoContent();
-        }
+        return NoContent();
     }
 }

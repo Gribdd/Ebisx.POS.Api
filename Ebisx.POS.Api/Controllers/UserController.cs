@@ -1,4 +1,5 @@
-﻿using Ebisx.POS.Api.Entities;
+﻿using Ebisx.POS.Api.DTOs.SalesInvoice;
+using Ebisx.POS.Api.DTOs.User;
 using Ebisx.POS.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,14 +17,14 @@ public class UserController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<ActionResult<UserResponseDto>> GetAll()
     {
         var users = await _userService.GetAllUsersAsync();
         return Ok(users);
     }
 
-    [HttpGet("{privateId}")]
-    public async Task<IActionResult> GetById(int privateId)
+    [HttpGet("{privateId:int}")]
+    public async Task<ActionResult<UserResponseDto>> GetById(int privateId)
     {
         var user = await _userService.GetUserByIdAsync(privateId);
         if (user == null)
@@ -33,14 +34,14 @@ public class UserController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] User user)
+    public async Task<ActionResult<UserResponseDto>> Create([FromBody] UserRequestDto user)
     {
         var createdUser = await _userService.CreateUserAsync(user);
         return CreatedAtAction(nameof(GetById), new { privateId = createdUser.PrivateId }, createdUser);
     }
 
-    [HttpPut("{privateId}")]
-    public async Task<IActionResult> Update(int privateId, [FromBody] User user)
+    [HttpPut("{privateId:int}")]
+    public async Task<IActionResult> Update(int privateId, [FromBody] UserRequestDto user)
     {
         var updated = await _userService.UpdateUserAsync(privateId, user);
         if (!updated)
@@ -49,7 +50,7 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{privateId}")]
+    [HttpDelete("{privateId:int}")]
     public async Task<IActionResult> Delete(int privateId)
     {
         var deleted = await _userService.DeleteUserAsync(privateId);
