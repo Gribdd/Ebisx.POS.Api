@@ -53,7 +53,7 @@ public class Payment
     /// Gets or sets the customer identifier. Optional if payment is not cash.
     /// </summary>
     [ForeignKey("Customer")]
-    public int CustomerId { get; set; }
+    public int? CustomerId { get; set; }
 
     /// <summary>
     /// Gets or sets the customer.

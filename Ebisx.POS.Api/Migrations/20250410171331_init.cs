@@ -162,17 +162,6 @@ namespace Ebisx.POS.Api.Migrations
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
-            migrationBuilder.InsertData(
-                table: "Products",
-                columns: new[] { "Id", "Name", "Barcode", "Quantity", "Price", "Vat", "SalesUnit" },
-                values: new object[,]
-                {
-                    { 1, "Product A", "1234567890123", 100, 10.99m, 1.99m, "Piece" },
-                    { 2, "Product B", "1234567890124", 200, 20.99m, 2.99m, "Piece" },
-                    { 3, "Product C", "1234567890125", 150, 15.49m, 1.49m, "Piece" },
-                    { 4, "Product D", "1234567890126", 50, 5.99m, 0.99m, "Piece" }
-                });
-
             migrationBuilder.CreateTable(
                 name: "UserRoles",
                 columns: table => new
@@ -330,7 +319,7 @@ namespace Ebisx.POS.Api.Migrations
                     PaymentTypeId = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<int>(type: "int", nullable: false),
                     NonCashPaymentMethodID = table.Column<int>(type: "int", nullable: true),
-                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    CustomerId = table.Column<int>(type: "int", nullable: true),
                     SalesInvoicePrivateId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -340,8 +329,7 @@ namespace Ebisx.POS.Api.Migrations
                         name: "FK_Payments_Customers_CustomerId",
                         column: x => x.CustomerId,
                         principalTable: "Customers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Payments_NonCashPaymentMethods_NonCashPaymentMethodID",
                         column: x => x.NonCashPaymentMethodID,

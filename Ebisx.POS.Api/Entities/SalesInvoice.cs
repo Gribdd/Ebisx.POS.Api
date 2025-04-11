@@ -69,4 +69,6 @@ public class SalesInvoice
     /// Gets or sets the user associated with the sales invoice.
     /// </summary>
     public User? User { get; set; }
+
+    public ICollection<Payment> Payment { get; set; } = null!;
 }

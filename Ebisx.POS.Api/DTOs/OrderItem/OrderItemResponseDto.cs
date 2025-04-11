@@ -9,6 +9,7 @@ public class OrderItemResponseDto
     public decimal PriceAtPurchase { get; set; }
     public decimal VatAtPurchase { get; set; }
     public int ProductId { get; set; }
+    public string ProductName { get; set; } = null!;
     public int OrderId { get; set; }
     public bool IsVoided { get; set; } = false;
 }

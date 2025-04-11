@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using AutoMapper;
+﻿using AutoMapper;
 using Ebisx.POS.Api.Data;
 using Ebisx.POS.Api.DTOs.Order;
+using Ebisx.POS.Api.DTOs.OrderItem;
 using Ebisx.POS.Api.Entities;
 using Ebisx.POS.Api.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -39,6 +39,7 @@ public class OrderService : IOrderService
         {
             var orders = await _dbContext.Orders
                 .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
                 .ToListAsync();
 
             var orderDtos = _mapper.Map<IEnumerable<OrderResponseDto>>(orders);
@@ -61,6 +62,7 @@ public class OrderService : IOrderService
         {
             var order = await _dbContext.Orders
                 .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
                 .FirstOrDefaultAsync(o => o.Id == id);
             if (order == null) return null;
             var orderDto = _mapper.Map<OrderResponseDto>(order);
@@ -85,9 +87,12 @@ public class OrderService : IOrderService
             _dbContext.Orders.Add(orderEntity);
             await _dbContext.SaveChangesAsync();
 
-            // Map the created order back to DTO
-            var createdOrderDto = _mapper.Map<OrderResponseDto>(orderEntity);
-            return createdOrderDto;
+            var createdOrder = await _dbContext.Orders
+                .Include(o => o.OrderItems)
+                .ThenInclude(oi => oi.Product)
+                .FirstOrDefaultAsync(o => o.Id == orderEntity.Id);
+
+            return _mapper.Map<OrderResponseDto>(orderEntity);
         }
         catch (Exception ex)
         {
@@ -146,6 +151,34 @@ public class OrderService : IOrderService
         catch
         {
             throw;
+        }
+    }
+
+    public async Task AddOrderItemsToExistingOrderAsync(int orderId, List<OrderItemRequestDto> orderItemsRequest)
+    {
+        // Fetch the order to add items to
+        var order = await _dbContext.Orders
+                                  .Include(o => o.OrderItems)
+                                  .FirstOrDefaultAsync(o => o.Id == orderId);
+
+        if (order != null)
+        {
+            var existingProductIds = order.OrderItems.Select(i => i.ProductId).ToHashSet();
+
+            foreach (var orderItem in orderItemsRequest)
+            {
+                if (!existingProductIds.Contains(orderItem.ProductId))
+                {
+                    order.OrderItems.Add(_mapper.Map<OrderItem>(orderItem));
+                }
+            }
+
+            // Save changes to the database
+            await _dbContext.SaveChangesAsync();
+        }
+        else
+        {
+            throw new InvalidOperationException("Order not found.");
         }
     }
 }

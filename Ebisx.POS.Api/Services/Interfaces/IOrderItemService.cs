@@ -1,4 +1,5 @@
 ﻿using Ebisx.POS.Api.DTOs.OrderItem;
+using Ebisx.POS.Api.Entities;
 
 namespace Ebisx.POS.Api.Services.Interfaces;
 

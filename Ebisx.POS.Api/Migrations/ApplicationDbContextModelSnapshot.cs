@@ -236,7 +236,7 @@ namespace Ebisx.POS.Api.Migrations
                     b.Property<decimal>("AmountPaid")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<int>("CustomerId")
+                    b.Property<int?>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<int?>("NonCashPaymentMethodID")
@@ -468,9 +468,7 @@ namespace Ebisx.POS.Api.Migrations
                 {
                     b.HasOne("Ebisx.POS.Api.Entities.Customer", "Customer")
                         .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerId");
 
                     b.HasOne("Ebisx.POS.Api.Entities.NonCashPaymentMethod", "NonCashPaymentMethod")
                         .WithMany()

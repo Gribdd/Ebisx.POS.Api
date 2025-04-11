@@ -1,5 +1,6 @@
 ﻿using Ebisx.POS.Api.DTOs;
 using Ebisx.POS.Api.DTOs.Order;
+using Ebisx.POS.Api.DTOs.OrderItem;
 using Ebisx.POS.Api.Entities;
 using Ebisx.POS.Api.Services;
 using Ebisx.POS.Api.Services.Interfaces;
@@ -71,5 +72,22 @@ public class OrderController : ControllerBase
             return NotFound();
         }
         return NoContent();
+    }
+
+    [HttpPost("{orderId:int}/items")]
+    [ProducesResponseType(type:typeof(OrderResponseDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> AddOrderItems(int orderId, [FromBody] List<OrderItemRequestDto> orderItemsRequest)
+    {
+        await _orderService.AddOrderItemsToExistingOrderAsync(orderId, orderItemsRequest);
+
+        var updatedOrder = await _orderService.GetOrderByIdAsync(orderId);
+
+        if (updatedOrder == null)
+        {
+            return NotFound(); 
+        }
+
+        return Ok(updatedOrder);
     }
 }

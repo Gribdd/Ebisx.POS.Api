@@ -1,5 +1,5 @@
 using Ebisx.POS.Api.Data;
-using Ebisx.POS.Api.DependencyInjection;
+using Ebisx.POS.Api.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,28 +21,20 @@ var app = builder.Build();
 {
     if (app.Environment.IsDevelopment())
     {
-        app.UseSwagger();
-        app.UseSwaggerUI();
+        app.WithSwagger();
+        await app.EnsureCleanDatabaseAsync();
+    }   
+    else
+    {
+        await app.EnsureMigratedDatabaseAsync();
     }
 
-    try
-    {
-        using var scope = app.Services.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        await db.Database.MigrateAsync();
-        await ApplicationDbInitializer.SeedAsync(db);
-    }
-    catch (Exception ex)
-    {
-        // Log or handle error here
-        Console.WriteLine($"Migration failed: {ex.Message}");
-    }
 
     app.MapControllers();
     app.UseHttpsRedirection();
     app.UseAuthorization();
 
-    app.Run();
+    await app.RunAsync();
 }
 
 

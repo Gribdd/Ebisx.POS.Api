@@ -6,5 +6,5 @@ public class PaymentRequestDto
     public int PaymentTypeId { get; set; }
     public int OrderId { get; set; }
     public int? NonCashPaymentMethodID { get; set; }
-    public int CustomerId { get; set; }
+    public int? CustomerId { get; set; }
 }

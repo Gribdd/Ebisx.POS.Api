@@ -12,7 +12,7 @@ namespace Ebisx.POS.Api.Entities;
 public class Product
 {
     /// <summary>
-    /// Gets or sets the unique identifier for the product.
+    /// Gets or sets the unique identifier for the product. 
     /// </summary>
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
