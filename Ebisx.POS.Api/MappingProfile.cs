@@ -48,7 +48,7 @@ public class MappingProfile : Profile
         CreateMap<Order, OrderResponseDto>();
         CreateMap<OrderRequestDto, Order>();
 
-        CreateMap<OrderItem, OrderItemResponseDto>();
+        CreateMap<OrderItem, OrderItemResponseDto>().ForMember(dest => dest.ProductName, opt => opt.MapFrom(src => src.Product.Name));
         CreateMap<OrderItemRequestDto, OrderItem>();
         
         CreateMap<Payment, PaymentResponseDto>();
